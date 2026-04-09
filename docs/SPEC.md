@@ -181,3 +181,33 @@ Between every two consecutive downloads (no matter whether succeeded or not) the
 Display information message "Waiting N seconds before the next download".
 
 Follow the best practices for PowerShell scripts. Name the variables clearly and according to the conventions.
+
+## REQ-5. Extract weather data from cities-months html files
+Create a Python script in `prepare/` directory which creates a csv file with weather data for each cities-month html file. 
+
+### Assumptions
+1. BeautifulSoup installed by `uv add beautifulsoup4`.
+
+### Parameters
+1. The script has one required parameter of the string type. This is a path to a directory containing html files - either relative or absolute. For example, `cities-months`.
+
+### Preprocess
+1. Identify whether the provided directory path is relative or absolute. If it is relative - resolve it relative to the local directory. Write the resulting absolute path to the console. Check that the directory exists and exit if it doesn't.
+
+### Process
+For each '.html' file in the directory:
+1. Verify that the name of the file matches the format "[string1]-[string2]-[string3].html"
+    - if false, write error to host and stop execution
+    - if true, define `city-name` as [string1], `month` as [string2], `year` as [string3]
+2. Read the file and use BeautifulSoup to extract data in a tabular format:
+    - each row corresponds to a day in a month
+    - columns:
+      - `city-name`
+      - `month`
+      - `year`
+      - `day-number` - for example, 1 to 31)
+      - `max-temperature` - corresponds to the day temperature forecasted on that day (for example, 30). Preserve sign for reusability. 
+      - `max-humidity` - corresponds to the maximum humidity forecasted on that day (for example, 40). Omit the percentage, keep the number. 
+    - all columns are integer
+3. No checks for missing days are needed.
+4. Save the file as a csv file with the same base name as the source, i.e. "[string1]-[string2]-[string3].csv", in the same directory. Overwrite file if exists. 
