@@ -125,29 +125,32 @@ Follow the best practices for Python scripts. Name the variables and functions c
 
 
 ## REQ-4. Fetch pages from a CSV
-Create a PowerShell script in the `page/` directory that downloads pages using a collection of URL + filenames in a CSV file. This is a functionality similar to the REQ-1 function. 
+Create a PowerShell script in the `page/` directory that downloads pages using a collection of URL + filenames in a CSV file. This is a functionality similar to the REQ-1 function (`page/Fetch-Pages.ps1`). 
 
 ### Assumptions
 1. Within the script, consider the caller's current working directory as local. 
+2. Use PowerShell 5.1 compatible functions. 
 
 ### Parameters
 1. The script has a required input parameter of string type. The parameter is the source file path - relative to the local directory or absolute. For example: `cities-months.csv` or `C:\temp\cities-months.csv`.
 
 2. The script has a required input parameter of string type with the name of the column with an URL. For example, "city-month-url".
 
-3. The script has a required input parameter of string type with the name of the column with an URL. For example, "city-month-file".
+3. The script has a required input parameter of string type with the name of the column with a file name. For example, "city-month-file".
 
 4. The script has one optional input parameter of integer type with a wait time expressed as a number of seconds. 10 by default, overridable by the caller.
 
-5. The script has one optional input parameter of string type with a range which follows the Python conventions of setting ranges. For example, "1:10" or ":2". Defaults to ":".
+5. The script has one optional input parameter of string type with a range to select rows from the collection, with a start and stop separated by ':'. For example, "1:10" or ":2". Empty start equals 0, Empty stop equals the number of the rows. Defaults to ":", which would mean all rows except the headers. 0 would be a first line after the headers. Stop bound is exclusive.  
 
 ### Preprocess
 1. Identify whether the provided source file path is relative or absolute. If it is relative - resolve it relative to the local directory. Write the resulting absolute path to the host. Check that file exists and exit if it doesn't. 
 
-2. Derive a name for a new directory. The name of the directory is the source filename minus the extension. 
+2. Derive a name for a new directory. The name of the directory is the source filename minus the extension (filename only is relevant here, not the full path). 
 For example, `cities-months.csv` -> `cities-months` directory. 
 Create this directory in the local directory. 
-If the directory already exists, show an error to host and stop the execution.
+If the directory already exists, write a warning to host, but continue.
+
+3. Parse the values in the range parameter to define start and stop. If the string cannot be parsed, write error to host and exit execution. 
 
 ### Input data
 The input file should be a csv file.
@@ -155,10 +158,10 @@ The file is assumed to be have the columns specified in the parameters.
 
 
 ### Process
-1. Read the input file specifed in the parameter 1. Read only the columns specified in the parameters 2 and 3. Read only the range of rows defined by the parameter 5. Create a collection for the resulting table, where each row has URL + filename. 
+1. Read the input file specifed in the parameter 1. Use only the columns specified in the parameters 2 and 3. Read only the range of rows defined by the parameter 5. Create a collection for the resulting table, where each row has URL + filename. 
 
 If the file does not have needed columns, show an error and exit execution.
-If the file does not have the specified range of rows, show an error and exit execution.
+If the file does not have the specified range of rows, even if there is an overlap, show an error and exit execution.
 If the file is empty, or only has a row of headrs, show an error and exit execution.
 
 2. For each line in the collection, the script invokes a request to download the page using the URL from the line and saves the result (`.Content` string in UTF-8 encoding) into the file using the filename from the line, under the newly created directory. 
@@ -172,9 +175,9 @@ No validation as to the server answer needed, save response as is.
 
 If the target file already exists, show the warning into the host, overwrite the file, continue.
 
-Display informational messages "X page saved to Y" after download + save. 
+Display informational messages "$url saved to $outputFilePath" after download + save. 
 
-Between every two consecutive downloads the script pauses for the duration of the waitTime. 
+Between every two consecutive downloads (no matter whether succeeded or not) the script pauses for the duration of the waitTime. 
 Display information message "Waiting N seconds before the next download".
 
-Follow the best practices for PowerShell scripts. Name the variables clearly and according to the conventions. 
+Follow the best practices for PowerShell scripts. Name the variables clearly and according to the conventions.
