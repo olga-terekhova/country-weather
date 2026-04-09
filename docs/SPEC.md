@@ -51,3 +51,36 @@ Between every two consecutive downloads the script pauses for the duration of th
 Display information message "Waiting N seconds before the next download".
 
 Follow the best practices for PowerShell scripts. Name the variables clearly and according to the conventions. 
+
+## REQ-2. Extract list of cities' URLs
+Create a PowerShell script in the 'prepare/' directory.
+
+### Assumptions
+1. Within the script, consider the caller's current working directory as local. 
+2. Use PowerShell 5.1 compatible functions. 
+
+### Parameters
+1. The script has a required input parameter of string type. The parameter is the source file path - relative to the local directory or absolute. For example: `country.html` or `C:\temp\country.html`.
+
+2. The script has a required input parameter of string type. The parameter is the output file path - relative to the local directory or absolute. For example: `country.csv` or `C:\temp\country.csv`.
+
+3. The script has one required parameter of string type. The parameter is the URL which should be appended to relative links in the html file to resolve them into absolute URLs (url-append). 
+
+### Preprocess
+1. Identify whether the provided source file path is relative or absolute. If it is relative - resolve it relative to the local directory. Write the resulting absolute path to the host. Check that file exists and exit if it doesn't. 
+2. Identify whether the provided output file path is relative or absolute. If it is relative - resolve it relative to the local directory. Create the needed directories in the path if they do not exist, surface it in the informational stream. 
+3. If the user submitted the url-append with a trailing slash (for example, `https://example.com/`), remove the trailing slash. 
+
+### Input data
+The file path is assumed to point to an html file. The html file is assumed to contain several links in the format of <a href="/prognoz/city-name/">.
+
+### Process
+1. Read the file from the preprocessed source file path. 
+2. Collect substrings that conform to an expression `<a href="/prognoz/*/">` (this structure exactly). For example `<a href="/prognoz/city-name/">`.
+3. For each line in the collection
+- extract a variable city-name as the value between `/prognoz/` and `/`
+- extract a variable city-url as a concatenation of url-append and the value of href. 
+4. Do not perform duplication checks.
+5. Save the resulting table as a CSV file with headers `city-name` and `city-url` and a default UTF encoding. The file is saved to the preprocessed output file path.
+  - If the target file already exists, show the warning into the host, overwrite the file, continue.
+  - Show the informational message with a number of cities saved to file. 
