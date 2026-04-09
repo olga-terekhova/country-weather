@@ -24,7 +24,7 @@ https://google.com google.html
 ```
 
 ### Work to be done
-The script creates a new directory in the local directory. The name of the directory is derived from the filename minus the extenstion. 
+The script creates a new directory in the local directory. The name of the directory is derived from the filename minus the extension. 
 For example, `page_list.txt` -> `page_list` directory.  
 
 If the directory already exists, show an error to host and stop the execution.
@@ -84,3 +84,97 @@ The file path is assumed to point to an html file. The html file is assumed to c
 5. Save the resulting table as a CSV file with headers `city-name` and `city-url` and a default UTF encoding. The file is saved to the preprocessed output file path.
   - If the target file already exists, show the warning into the host, overwrite the file, continue.
   - Show the informational message with a number of cities saved to file. 
+
+## REQ-3. Create a table with cities and months cross joined. 
+Create a Python script in `prepare/` that cross joins a csv with cities with a csv with months.
+
+### Assumptions
+1. duckdb installed by `uv add duckdb`.
+2. User created a file `months.csv` with the list of strings encoding month x year pairs. 
+3. csv files have headers.
+
+### Parameters
+1. cities-csv (string), optional, defaults to `cities/cities.csv`.
+2. months-csv (string), optional, defaults to `months/months.csv`.
+3. cities-months-csv (string), optional, defaults to `cities-months/cities-months.csv`.
+
+### Preprocess
+1. Identify whether the provided cities-csv path is relative or absolute. If it is relative - resolve it relative to the local directory. Write the resulting absolute path to the console. Check that file exists and exit if it doesn't. 
+2. Identify whether the provided months-csv path is relative or absolute. If it is relative - resolve it relative to the local directory. Write the resulting absolute path to the console. Check that file exists and exit if it doesn't.
+3. Identify whether the provided cities-months-csv path is relative or absolute. If it is relative - resolve it relative to the local directory. Write the resulting absolute path to the console. Create the needed directories in the path if they do not exist, surface it in the informational stream. 
+
+### Process
+1. Use duckdb to run the query:
+```
+SELECT 
+    cities."city-name",
+    months.month,
+    cities."city-url" || months.month || '/' as "city-month-url",
+    cities."city-name" || '-'|| months.month || '.html' as "city-month-file"
+    
+FROM read_csv_auto('{cities-csv}') as cities CROSS JOIN read_csv_auto('{months-csv}') as months
+
+```
+`{cities-csv}` and `{months-csv}` is pseudo-code as placeholders for file paths after preprocessing.
+
+2. Write the result in a CSV format to the file specified by `cities-months-csv` path. Enforce wrapping in `"` quotes. If the file already exists, overwrite. 
+
+### Instructions
+Follow the best practices for Python scripts. Name the variables and functions clearly and according to the conventions. 
+
+
+
+## REQ-4. Fetch pages from a CSV
+Create a PowerShell script in the `page/` directory that downloads pages using a collection of URL + filenames in a CSV file. This is a functionality similar to the REQ-1 function. 
+
+### Assumptions
+1. Within the script, consider the caller's current working directory as local. 
+
+### Parameters
+1. The script has a required input parameter of string type. The parameter is the source file path - relative to the local directory or absolute. For example: `cities-months.csv` or `C:\temp\cities-months.csv`.
+
+2. The script has a required input parameter of string type with the name of the column with an URL. For example, "city-month-url".
+
+3. The script has a required input parameter of string type with the name of the column with an URL. For example, "city-month-file".
+
+4. The script has one optional input parameter of integer type with a wait time expressed as a number of seconds. 10 by default, overridable by the caller.
+
+5. The script has one optional input parameter of string type with a range which follows the Python conventions of setting ranges. For example, "1:10" or ":2". Defaults to ":".
+
+### Preprocess
+1. Identify whether the provided source file path is relative or absolute. If it is relative - resolve it relative to the local directory. Write the resulting absolute path to the host. Check that file exists and exit if it doesn't. 
+
+2. Derive a name for a new directory. The name of the directory is the source filename minus the extension. 
+For example, `cities-months.csv` -> `cities-months` directory. 
+Create this directory in the local directory. 
+If the directory already exists, show an error to host and stop the execution.
+
+### Input data
+The input file should be a csv file.
+The file is assumed to be have the columns specified in the parameters.
+
+
+### Process
+1. Read the input file specifed in the parameter 1. Read only the columns specified in the parameters 2 and 3. Read only the range of rows defined by the parameter 5. Create a collection for the resulting table, where each row has URL + filename. 
+
+If the file does not have needed columns, show an error and exit execution.
+If the file does not have the specified range of rows, show an error and exit execution.
+If the file is empty, or only has a row of headrs, show an error and exit execution.
+
+2. For each line in the collection, the script invokes a request to download the page using the URL from the line and saves the result (`.Content` string in UTF-8 encoding) into the file using the filename from the line, under the newly created directory. 
+For example:
+The content of `https://example.com` is saved to `page_list\example.html`.
+The content of `https://google.com` is saved to `page_list\google.html`.
+
+If there are connection-level failures (Invoke-WebRequest throws an exception), show in the error stream, skip the line, continue with the next one (don't exit). 
+
+No validation as to the server answer needed, save response as is.
+
+If the target file already exists, show the warning into the host, overwrite the file, continue.
+
+Display informational messages "X page saved to Y" after download + save. 
+
+Between every two consecutive downloads the script pauses for the duration of the waitTime. 
+Display information message "Waiting N seconds before the next download".
+
+Follow the best practices for PowerShell scripts. Name the variables clearly and according to the conventions. 
