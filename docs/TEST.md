@@ -39,11 +39,21 @@ print(f'Day keys for {first}:', day_keys[:5])
 print(f'Sample record:', d[first][day_keys[0]][0])
 "
 
-# Error: file not found
+### Error: file not found
 uv run present/build_daily_json.py nonexistent.csv /tmp/x
 
-# Error: file is empty
+### Error: file is empty
 touch /tmp/empty.csv && uv run present/build_daily_json.py /tmp/empty.csv /tmp/x
 
-# Target
+### Target
 uv run present/build_daily_json.py prepare/cities-days/cities-days.csv present/daily
+
+## REQ-8
+Host machine shell:
+
+cd serve
+docker compose up -d
+
+Host machine browser:
+
+http://localhost:3000

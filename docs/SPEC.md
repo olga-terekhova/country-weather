@@ -290,3 +290,10 @@ An example of the resulting structure:
 ```
 
 3. Write the three layered json into the file `daily.json` in the output directory. Overwrite if the file exist.
+
+## REQ-8. Create a container to serve a small server with html, js, and json
+Create new files: 
+  - serve/Dockerfile - minimal Node.js image with serve installed globally via `npm install -g serve`, running serve -p 3000 . as the default command 
+  - serve/docker-compose.yml - defines a single service that builds from ./serve, mounts ../present/daily into the container at /app, sets /app as the working directory, and maps host port 3000 to container port 3000                                                
+                                                             
+Runtime behavior: running docker compose up from the host inside the serve/ directory (or with -f serve/docker-compose.yml) starts a container that statically serves the contents of present/daily/ - including daily.json and future HTML and JS files - at http://localhost:3000.    

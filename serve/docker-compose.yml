@@ -1,0 +1,7 @@
+services:
+  serve:
+    build: .
+    volumes:
+      - ../present/daily:/app
+    ports:
+      - "3000:3000"
