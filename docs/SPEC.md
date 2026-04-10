@@ -236,3 +236,57 @@ For each '.csv' file in the input directory (sorted by name in ascending alphabe
 Checks:
   - No duplicate checks needed. 
   - If the file has headers in the correct schema but is otherwise empty, write warning to the host and continue. 
+
+## REQ-7. Create JSON layer for presenting data in pre-indexed aggregates
+Create a Python script in `present/` directory. 
+
+### Parameters
+1. A required string parameter for the source file path. For example, 
+2. A requred string paramater fro the output files directory.
+
+### Preprocess
+1. Identify whether the provided source file path is relative or absolute. If it is relative - resolve it relative to the local directory. Write the resulting absolute path to the console. 
+Checks:
+- Verify that the file path exists, write error to host and exit if it doesn't.
+- Verify that the file has the 'csv' extension, and the file is not empty. Write error to the console and exit if not true.
+2. Identify whether the provided output directory path is relative or absolute. If it is relative - resolve it relative to the local directory. Write the resulting absolute path to the console. Create the needed directories in the path if they do not exist, surface it in the informational stream. 
+
+### Process
+
+1. Extract the daily dataset with the schema "year, month, day, city, temperature, humidity" using duckdb:
+
+```
+SELECT 
+    year,
+    month,
+    "day-number" as day,
+    "city-name" as city,
+    "max-temperature" as temperature,
+    "max-humidity" as humidity
+FROM read_csv_auto('{source file path}')
+ORDER BY 1, 2, 3, 4
+```
+
+
+2. Build a json out of the rows fetched by duckdb with a three-layer hierarchy: "YYYY-MM" -> day (int-like string) -> [city records].
+First layer key: `f"{year}-{month:02d}"`
+Second layer key: day
+Third layer keys: city, temperature, humidity
+
+An example of the resulting structure:
+```
+{
+  "2024-01": {
+    "1":  [ { "city": "Toronto", "temperature": -3, "humidity": 71 }, ... ],
+    "2":  [ ... ],
+    ...
+    "31": [ ... ]
+  },
+  "2024-02": {
+    "1":  [ ... ],
+    ...
+  }
+}
+```
+
+3. Write the three layered json into the file `daily.json` in the output directory. Overwrite if the file exist.

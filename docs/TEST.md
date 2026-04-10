@@ -24,3 +24,26 @@ uv run prepare/union_weather.py page/cities-months --output /tmp/cities-days-tes
 wc -l /tmp/cities-days-test.csv && head -2 /tmp/cities-days-test.csv && tail -2 /tmp/cities-days-test.csv 
 
 uv run prepare/union_weather.py page/cities-months --output prepare/cities-days/cities-days.csv
+
+## REQ-7
+uv run present/build_daily_json.py prepare/cities-days/cities-days.csv /tmp/weather-out
+python3 -c "
+import json
+with open('/tmp/weather-out/daily.json') as f:
+    d = json.load(f)
+keys = list(d.keys())
+print('Top-level keys:', keys)
+first = keys[0]
+day_keys = list(d[first].keys())
+print(f'Day keys for {first}:', day_keys[:5])
+print(f'Sample record:', d[first][day_keys[0]][0])
+"
+
+# Error: file not found
+uv run present/build_daily_json.py nonexistent.csv /tmp/x
+
+# Error: file is empty
+touch /tmp/empty.csv && uv run present/build_daily_json.py /tmp/empty.csv /tmp/x
+
+# Target
+uv run present/build_daily_json.py prepare/cities-days/cities-days.csv present/daily/daily.json
