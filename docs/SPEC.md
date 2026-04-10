@@ -361,7 +361,7 @@ Runtime behavior: running docker compose up from the host inside the serve/ dire
   - alternatively, a user can select a city by clicking on the city dot. Clicking on the dot corresponding to a selected city unselects it to ' '. Both actions trigger a redraw of the scatter plot, as well as the city info
 
 ## REQ-10. Create a reference of the cities
-One time task of data compilation and augmentation, saved to `refs/city-list.csv`.
+One time task of data compilation and augmentation, saved to `refs/city-list.csv` and `refs/city-list.json`.
 
 ### Description:
 Armenia Cities — reference table of 20 Armenian cities, sourced from a city list on pogoda.mail.ru and augmented with geographic and multilingual name data.
