@@ -297,3 +297,54 @@ Create new files:
   - serve/docker-compose.yml - defines a single service that builds from ./serve, mounts ../present/daily into the container at /app, sets /app as the working directory, and maps host port 3000 to container port 3000                                                
                                                              
 Runtime behavior: running docker compose up from the host inside the serve/ directory (or with -f serve/docker-compose.yml) starts a container that statically serves the contents of present/daily/ - including daily.json and future HTML and JS files - at http://localhost:3000.    
+
+## REQ-9. Visualize daily city weather scatter plot
+1. Create `present/daily/index.html` and necessary JS files to render a visualization of data in `present/daily/daily.json`. 
+2. Assume all files are in `present/daily/`, use relative paths. 
+3. Use D3 for visualization. 
+4. Visuals on the page:
+  - a dropdown labeled "Year and Month" directly above the plot rectangle
+    - width 100 px
+  - a dropdown labeled "Track city" below "Year and Month"
+    - width 100 px
+  - a horizontal slider below "Track city"
+    - implemented as `HTML <input type="range">`
+    - width 800 px
+    - an empty placeholder label for the start of the month on the left
+    - an empty placeholder label for the end of the month on the right
+    - an empty placeholder label for the current day directly above the slider caret
+  - a rectangle for the scatter plot below the slider
+    - dimensions are 800 x 500
+    - X axis is "Humidity, %"
+    - Y axis is "Temperature, °C"
+  
+5. Data init:
+  - read `daily.json` at the page load
+    - first level has year-month values, like "2025-08"
+    - second level has int-like day values, like "1", "20"
+    - third level has several items for city and weather data for that year, month and day, like {"city": "toronto", "temperature": 37, "humidity": 30}
+  - get the min and max values for temperature and humidity from the whole dataset
+    - define the visible dimensions of both axis as [min value of the metric - 10%; max value of the metric + 10%]
+    - add evenly spaced ticks on the plot axes
+    - formulate how to translate any given pair of humidity and temperature into the coordinates on the scatter plot
+  - collect the first level keys from the json as year-month strings
+  - populate the dropdown values with the year-month strings
+  - set the current year-month value as the first item in the collection
+  - set the current day as the first day in the current month
+  - trigger a redraw of the slider and of the scatter plot
+6. Visualization
+  - slider:
+    - get the collection of days in the current year-month
+    - set current day at the first day in the collection
+    - break down the slider horizontal line into the number of days in the current month
+    - populate the labels for start, stop, current day
+    - draw the slider caret at current day
+  - scatter plot
+    - get the collection of city data in the current year, month and day
+    - for each item: 
+      - calculate X and Y based on the values of humidity and temperature
+      - put a dot labeled with the city name (city name always visible)
+      - assign a label on hover with the exact values of city name, humidity and temperature
+7. User interactions:
+  - a user can select a year-month string from the dropdown which triggers an update of slider and scatter plot for the 1st day of this month
+  - a user can move the slide between the start and end values for the current month, which triggers a redraw of the scatter plot for this day

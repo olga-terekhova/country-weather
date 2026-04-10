@@ -2,9 +2,288 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Daily</title>
+  <title>Daily City Weather</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+
+    #controls {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .dropdown-label {
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    #month-select, #city-select {
+      width: 100px;
+    }
+
+    #slider-container {
+      display: flex;
+      flex-direction: column;
+      width: 800px;
+    }
+
+    #current-day-label {
+      font-size: 12px;
+      text-align: left;
+      min-height: 16px;
+      position: relative;
+    }
+
+    #current-day-label span {
+      position: absolute;
+      transform: translateX(-50%);
+    }
+
+    #slider-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #day-slider {
+      flex: 1;
+    }
+
+    #start-label, #end-label {
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    #plot {
+      margin-top: 4px;
+    }
+
+    .dot {
+      fill: steelblue;
+      opacity: 0.7;
+    }
+
+    .dot:hover {
+      fill: orange;
+    }
+
+    .city-label {
+      font-size: 11px;
+      pointer-events: none;
+    }
+
+    .tooltip {
+      position: absolute;
+      background: rgba(0,0,0,0.75);
+      color: white;
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 4px;
+      pointer-events: none;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  <h1>Daily</h1>
+
+<div id="controls">
+  <label class="dropdown-label" for="month-select">Year and Month</label>
+  <select id="month-select"></select>
+
+  <label class="dropdown-label" for="city-select">Track city</label>
+  <select id="city-select"></select>
+
+  <div id="slider-container">
+    <div id="current-day-label"><span id="current-day-text"></span></div>
+    <div id="slider-row">
+      <span id="start-label"></span>
+      <input type="range" id="day-slider">
+      <span id="end-label"></span>
+    </div>
+  </div>
+</div>
+
+<svg id="plot"></svg>
+<div class="tooltip" id="tooltip"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+  const WIDTH = 800;
+  const HEIGHT = 500;
+  const MARGIN = { top: 20, right: 20, bottom: 50, left: 55 };
+
+  const svg = d3.select('#plot')
+    .attr('width', WIDTH + MARGIN.left + MARGIN.right)
+    .attr('height', HEIGHT + MARGIN.top + MARGIN.bottom);
+
+  const g = svg.append('g')
+    .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
+
+  // Axes groups
+  const xAxisG = g.append('g').attr('transform', `translate(0,${HEIGHT})`);
+  const yAxisG = g.append('g');
+
+  // Axis labels
+  g.append('text')
+    .attr('x', WIDTH / 2)
+    .attr('y', HEIGHT + MARGIN.bottom - 6)
+    .attr('text-anchor', 'middle')
+    .attr('font-size', 13)
+    .text('Humidity, %');
+
+  g.append('text')
+    .attr('transform', 'rotate(-90)')
+    .attr('x', -HEIGHT / 2)
+    .attr('y', -MARGIN.left + 14)
+    .attr('text-anchor', 'middle')
+    .attr('font-size', 13)
+    .text('Temperature, \u00b0C');
+
+  const dotsG = g.append('g');
+
+  const tooltip = document.getElementById('tooltip');
+
+  let xScale, yScale;
+  let data = {};
+  let currentMonth, currentDay;
+
+  function pad10(v) { return v * 1.1; }
+  function pad10low(v) { return v < 0 ? v * 1.1 : v * 0.9; }
+
+  fetch('daily.json')
+    .then(r => r.json())
+    .then(json => {
+      data = json;
+
+      // Compute global min/max
+      let allTemps = [], allHumids = [];
+      for (const month of Object.values(data)) {
+        for (const day of Object.values(month)) {
+          for (const item of day) {
+            allTemps.push(item.temperature);
+            allHumids.push(item.humidity);
+          }
+        }
+      }
+
+      const tMin = d3.min(allTemps);
+      const tMax = d3.max(allTemps);
+      const hMin = d3.min(allHumids);
+      const hMax = d3.max(allHumids);
+
+      xScale = d3.scaleLinear()
+        .domain([hMin * 0.9, hMax * 1.1])
+        .range([0, WIDTH]);
+
+      yScale = d3.scaleLinear()
+        .domain([tMin * 0.9, tMax * 1.1])
+        .range([HEIGHT, 0]);
+
+      xAxisG.call(d3.axisBottom(xScale).ticks(8));
+      yAxisG.call(d3.axisLeft(yScale).ticks(8));
+
+      // Populate dropdown
+      const months = Object.keys(data);
+      const select = document.getElementById('month-select');
+      months.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        select.appendChild(opt);
+      });
+
+      select.addEventListener('change', () => {
+        setMonth(select.value);
+      });
+
+      setMonth(months[0]);
+    });
+
+  function setMonth(month) {
+    currentMonth = month;
+    const days = Object.keys(data[month]).map(Number).sort((a, b) => a - b);
+    const firstDay = days[0];
+    const lastDay = days[days.length - 1];
+
+    const slider = document.getElementById('day-slider');
+    slider.min = firstDay;
+    slider.max = lastDay;
+    slider.step = 1;
+    slider.value = firstDay;
+
+    document.getElementById('start-label').textContent = firstDay;
+    document.getElementById('end-label').textContent = lastDay;
+
+    slider.oninput = () => {
+      currentDay = Number(slider.value);
+      updateCurrentDayLabel();
+      redrawPlot();
+    };
+
+    currentDay = firstDay;
+    updateCurrentDayLabel();
+    redrawPlot();
+  }
+
+  function updateCurrentDayLabel() {
+    const slider = document.getElementById('day-slider');
+    const min = Number(slider.min);
+    const max = Number(slider.max);
+    const val = Number(slider.value);
+
+    // Calculate thumb position as fraction of track width
+    const fraction = (val - min) / (max - min);
+    const sliderEl = slider;
+    const trackWidth = sliderEl.offsetWidth;
+    // Native range thumb offset formula
+    const thumbWidth = 16; // approximate px
+    const leftPx = fraction * (trackWidth - thumbWidth) + thumbWidth / 2;
+
+    const labelEl = document.getElementById('current-day-text');
+    labelEl.textContent = val;
+    // Offset relative to slider-container: slider-row has start-label before the slider
+    const startLabel = document.getElementById('start-label');
+    const startWidth = startLabel.offsetWidth + 6; // gap
+    labelEl.style.left = (startWidth + leftPx) + 'px';
+  }
+
+  function redrawPlot() {
+    const dayKey = String(currentDay);
+    const records = (data[currentMonth] && data[currentMonth][dayKey]) || [];
+
+    const dots = dotsG.selectAll('.dot-group').data(records, d => d.city);
+
+    const enter = dots.enter().append('g').attr('class', 'dot-group');
+    enter.append('circle').attr('class', 'dot').attr('r', 5);
+    enter.append('text').attr('class', 'city-label');
+
+    const merged = enter.merge(dots);
+
+    merged.select('circle')
+      .attr('cx', d => xScale(d.humidity))
+      .attr('cy', d => yScale(d.temperature))
+      .on('mouseover', (event, d) => {
+        tooltip.style.display = 'block';
+        tooltip.innerHTML = `${d.city}<br>Humidity: ${d.humidity}%<br>Temperature: ${d.temperature}\u00b0C`;
+      })
+      .on('mousemove', (event) => {
+        tooltip.style.left = (event.pageX + 12) + 'px';
+        tooltip.style.top = (event.pageY - 28) + 'px';
+      })
+      .on('mouseout', () => {
+        tooltip.style.display = 'none';
+      });
+
+    merged.select('text')
+      .attr('x', d => xScale(d.humidity) + 7)
+      .attr('y', d => yScale(d.temperature) + 4)
+      .text(d => d.city);
+
+    dots.exit().remove();
+  }
+</script>
 </body>
 </html>

@@ -57,3 +57,7 @@ docker compose up -d
 Host machine browser:
 
 http://localhost:3000
+
+## REQ-9
+From present/daily:
+Invoke-WebRequest -Uri "https://d3js.org/d3.v7.min.js" -OutFile "d3.v7.min.js" -UseBasicParsing
