@@ -211,3 +211,28 @@ For each '.html' file in the directory:
     - all columns are integer
 3. No checks for missing days are needed.
 4. Save the file as a csv file with the same base name as the source, i.e. "[string1]-[string2]-[string3].csv", in the same directory. Overwrite file if exists. 
+
+## REQ-6. Create a single dataset with weather data
+Create a Python script in `prepare/` which writes separate csv files into one (union all datasets into one).
+
+### Parameters
+1. The script has one required parameter of the string type. This is a path to a directory containing csv files - either relative or absolute. For example, `cities-months`.
+2. One optional requirement of the string type, which is a path to the output file. Defaults to `cities-days/cities-days.csv`.
+
+### Assumptions
+
+### Preprocess
+1. Identify whether the provided directory path is relative or absolute. If it is relative - resolve it relative to the local directory. Write the resulting absolute path to the console. Check that the directory exists and exit if it doesn't.
+2. Identify whether the provided cities-days path is relative or absolute. If it is relative - resolve it relative to the local directory. Write the resulting absolute path to the console. Create the needed directories in the path if they do not exist, surface it in the informational stream. 
+
+### Process
+
+Create the output file at the path defined by the preprocessed parameter 2. Overwrite the file if exists. Write headers: `city-name`, `month`, `year`, `day-number`, `max-temperature`, `max-humidity`.
+
+For each '.csv' file in the input directory (sorted by name in ascending alphabetical order):
+1. Verify that it has the same schema as the headers in the output file: same columns names in the same order. 
+  - If false, write warning in the host, skip the file.
+  - If true, write all non-header rows into the output file. 
+Checks:
+  - No duplicate checks needed. 
+  - If the file has headers in the correct schema but is otherwise empty, write warning to the host and continue. 
