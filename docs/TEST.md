@@ -46,4 +46,4 @@ uv run present/build_daily_json.py nonexistent.csv /tmp/x
 touch /tmp/empty.csv && uv run present/build_daily_json.py /tmp/empty.csv /tmp/x
 
 # Target
-uv run present/build_daily_json.py prepare/cities-days/cities-days.csv present/daily/daily.json
+uv run present/build_daily_json.py prepare/cities-days/cities-days.csv present/daily
