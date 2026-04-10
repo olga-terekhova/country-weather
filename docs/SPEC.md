@@ -359,3 +359,18 @@ Runtime behavior: running docker compose up from the host inside the serve/ dire
   - a user can move the slide between the start and end values for the current month, which triggers a redraw of the scatter plot for this day, as well as the city info
   - a user can select a city from the track city dropdown or unselect by choosing ' ', which triggers a redraw of the scatter plot, as well as the city info
   - alternatively, a user can select a city by clicking on the city dot. Clicking on the dot corresponding to a selected city unselects it to ' '. Both actions trigger a redraw of the scatter plot, as well as the city info
+
+## REQ-10. Create a reference of the cities
+One time task of data compilation and augmentation, saved to `refs/city-list.csv`.
+
+### Description:
+Armenia Cities — reference table of 20 Armenian cities, sourced from a city list on pogoda.mail.ru and augmented with geographic and multilingual name data.
+
+Columns:
+
+city_name_source — the original city slug as it appeared in the source data, using a non-standard Latin transliteration (e.g. erevan, djermuk, astkhadzor).
+english_name — the current official English name as used on Wikipedia and Google Maps (e.g. echmiadzin → Vagharshapat, astkhadzor → Tsaghkadzor).
+armenian_name — the city name in the Armenian script, sourced from Wikipedia.
+russian_name — the city name in Russian (Cyrillic), extracted directly from the linked HTML page (pogoda.mail.ru), matched to each city via its URL slug.
+latitude / longitude — approximate city center coordinates, sourced from Wikipedia and geographic reference data.
+google_maps_link — a direct Google Maps URL constructed from the latitude and longitude in the format https://www.google.com/maps?q=lat,lon.
