@@ -303,21 +303,25 @@ Runtime behavior: running docker compose up from the host inside the serve/ dire
 2. Assume all files are in `present/daily/`, use relative paths. 
 3. Use D3 for visualization. 
 4. Visuals on the page:
-  - a dropdown labeled "Year and Month" directly above the plot rectangle
-    - width 100 px
-  - a dropdown labeled "Track city" on the right to "Year and Month"
-    - width 100 px
-  - an empty div to show detailed information about the city (city info) on the right to "Track city"
-  - a horizontal slider below "Year and Month" and "Track city"
-    - implemented as `HTML <input type="range">`
-    - width 800 px
-    - an empty placeholder label for the start of the month on the left
-    - an empty placeholder label for the end of the month on the right
-    - an empty placeholder label for the current day directly above the slider caret
-  - a rectangle for the scatter plot below the slider
-    - dimensions are 800 x 400
-    - X axis is "Humidity, %"
-    - Y axis is "Temperature, °C"
+  - top pane:
+    - a dropdown labeled "Year and Month" directly above the plot rectangle
+      - width 100 px
+    - a dropdown labeled "Track city" on the right to "Year and Month"
+      - width 100 px
+    - an empty div to show detailed information about the city (city info) on the right to "Track city"
+    - a horizontal slider below "Year and Month" and "Track city"
+      - implemented as `HTML <input type="range">`
+      - width 700 px
+      - an empty placeholder label for the start of the month on the left
+      - an empty placeholder label for the end of the month on the right
+      - an empty placeholder label for the current day directly above the slider caret
+  - bottom left pane - width 800 px:
+    - a rectangle for the scatter plot below the slider
+      - dimensions are 600 x 400
+      - X axis is "Humidity, %"
+      - Y axis is "Temperature, °C"
+  - bottom right pane - width 400 px:
+    - img element showing `present/daily/Armenia_location_map.svg`
   
 5. Data init:
   - read `daily.json` at the page load

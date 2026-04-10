@@ -91,6 +91,31 @@
       padding-bottom: 2px;
     }
 
+    #page {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    #bottom-panes {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 24px;
+    }
+
+    #bottom-left-pane {
+      width: 800px;
+    }
+
+    #bottom-right-pane {
+      width: 400px;
+    }
+
+    #bottom-right-pane img {
+      width: 100%;
+    }
+
     .tooltip {
       position: absolute;
       background: rgba(0,0,0,0.75);
@@ -105,30 +130,39 @@
 </head>
 <body>
 
-<div id="controls">
-  <div id="dropdowns">
-    <div class="dropdown-group">
-      <label class="dropdown-label" for="month-select">Year and Month</label>
-      <select id="month-select"></select>
+<div id="page">
+  <div id="controls">
+    <div id="dropdowns">
+      <div class="dropdown-group">
+        <label class="dropdown-label" for="month-select">Year and Month</label>
+        <select id="month-select"></select>
+      </div>
+      <div class="dropdown-group">
+        <label class="dropdown-label" for="city-select">Track city</label>
+        <select id="city-select"></select>
+      </div>
+      <div id="city-info"></div>
     </div>
-    <div class="dropdown-group">
-      <label class="dropdown-label" for="city-select">Track city</label>
-      <select id="city-select"></select>
+
+    <div id="slider-container">
+      <div id="current-day-label"><span id="current-day-text"></span></div>
+      <div id="slider-row">
+        <span id="start-label"></span>
+        <input type="range" id="day-slider">
+        <span id="end-label"></span>
+      </div>
     </div>
-    <div id="city-info"></div>
   </div>
 
-  <div id="slider-container">
-    <div id="current-day-label"><span id="current-day-text"></span></div>
-    <div id="slider-row">
-      <span id="start-label"></span>
-      <input type="range" id="day-slider">
-      <span id="end-label"></span>
+  <div id="bottom-panes">
+    <div id="bottom-left-pane">
+      <svg id="plot"></svg>
+    </div>
+    <div id="bottom-right-pane">
+      <img src="Armenia_location_map.svg" alt="Armenia location map">
     </div>
   </div>
 </div>
-
-<svg id="plot"></svg>
 <div class="tooltip" id="tooltip"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
