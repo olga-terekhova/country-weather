@@ -322,6 +322,7 @@ Runtime behavior: running docker compose up from the host inside the serve/ dire
       - Y axis is "Temperature, °C"
   - bottom right pane - width 400 px:
     - img element showing `present/daily/Armenia_location_map.svg`
+    - a transparent SVG overlayed over the img with the map with the same dimensions
   
 5. Data init:
   - read `daily.json` at the page load
@@ -341,7 +342,7 @@ Runtime behavior: running docker compose up from the host inside the serve/ dire
   - collect all distinct values for a city name from the dataset
   - populate the track city dropdown with the city name string + a ' ' string, sorted alphabetically
   - set current city name to ' ' (which means no city selected)
-  - trigger a redraw of the slider and of the scatter plot
+  - trigger a redraw of the slider, the scatter plot, and the map
 6. Visualization
   - slider:
     - get the collection of days in the current year-month
@@ -362,11 +363,16 @@ Runtime behavior: running docker compose up from the host inside the serve/ dire
     - if the current city is not ' ' then
       - find this city in the city list reference looking up the key "city_name_source". 
       - display the string: "{temperature}°C, {humidity}%  | {english_name} {armenian_name} {russian_name} <a href='{google_maps_link}'>Map</a> <a href='{wiki_link}'>Wiki</a>"
+  - map
+    - use description in `refs/Armenia_location_map.md` to understand how to convert any given pair of latitude and longitude to dimensions relative to the displayed map
+    - for all cities in city-list, use D3 to place a dot at (x,y) corresponding to the city's (longitude, latitude)
+    - same conventions about size and color of the dot as in the scatter plot, including the current city condition 
 7. User interactions:
   - a user can select a year-month string from the dropdown which triggers an update of slider and scatter plot for the 1st day of this month, as well as the city info
   - a user can move the slide between the start and end values for the current month, which triggers a redraw of the scatter plot for this day, as well as the city info
-  - a user can select a city from the track city dropdown or unselect by choosing ' ', which triggers a redraw of the scatter plot, as well as the city info
-  - alternatively, a user can select a city by clicking on the city dot. Clicking on the dot corresponding to a selected city unselects it to ' '. Both actions trigger a redraw of the scatter plot, as well as the city info
+  - a user can select a city from the track city dropdown or unselect by choosing ' ', which triggers a redraw of the scatter plot, as well as the city info and the map
+  - alternatively, a user can select a city by clicking on the city dot on the scatter plot. Clicking on the dot corresponding to a selected city unselects it to ' '. Both actions trigger a redraw of the scatter plot, as well as the city info and the map
+  - alternatively, a user can select a city by clicking on the city dot on the map. Clicking on the dot corresponding to a selected city unselects it to ' '. Both actions trigger a redraw of the scatter plot, as well as the city info and the map
 
 ## REQ-10. Create a reference of the cities
 One time task of data compilation and augmentation, saved to `refs/city-list.csv` and `refs/city-list.json`, copied to 'present/daily/city-list.json`.

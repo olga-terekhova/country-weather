@@ -110,10 +110,18 @@
 
     #bottom-right-pane {
       width: 400px;
+      position: relative;
     }
 
     #bottom-right-pane img {
       width: 100%;
+      display: block;
+    }
+
+    #map-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
     }
 
     .tooltip {
@@ -160,6 +168,7 @@
     </div>
     <div id="bottom-right-pane">
       <img src="Armenia_location_map.svg" alt="Armenia location map">
+      <svg id="map-overlay"></svg>
     </div>
   </div>
 </div>
@@ -170,6 +179,24 @@
   const WIDTH = 600;
   const HEIGHT = 400;
   const MARGIN = { top: 20, right: 20, bottom: 50, left: 55 };
+
+  // Map overlay
+  const MAP_N = 41.4, MAP_S = 38.8, MAP_W = 43.4, MAP_E = 46.7;
+  const MAP_DISPLAY_W = 400;
+  const MAP_DISPLAY_H = MAP_DISPLAY_W * (1198 / 1169);
+
+  const mapSvg = d3.select('#map-overlay')
+    .attr('width', MAP_DISPLAY_W)
+    .attr('height', MAP_DISPLAY_H);
+
+  const mapDotsG = mapSvg.append('g');
+
+  function lonToMapX(lon) {
+    return (lon - MAP_W) / (MAP_E - MAP_W) * MAP_DISPLAY_W;
+  }
+  function latToMapY(lat) {
+    return (MAP_N - lat) / (MAP_N - MAP_S) * MAP_DISPLAY_H;
+  }
 
   const svg = d3.select('#plot')
     .attr('width', WIDTH + MARGIN.left + MARGIN.right)
@@ -271,6 +298,7 @@
       citySelect.addEventListener('change', () => {
         currentCity = citySelect.value;
         redrawPlot();
+        redrawMap();
         updateCityInfo();
       });
 
@@ -302,6 +330,7 @@
     currentDay = firstDay;
     updateCurrentDayLabel();
     redrawPlot();
+    redrawMap();
     updateCityInfo();
   }
 
@@ -344,6 +373,32 @@
       + `\u00a0<a href="${meta.wiki_link}" target="_blank">Wiki</a>`;
   }
 
+  function redrawMap() {
+    const dots = mapDotsG.selectAll('.map-dot').data(Object.values(cityList), d => d.city_name_source);
+
+    dots.enter().append('circle')
+      .attr('class', 'map-dot')
+      .attr('r', 5)
+      .attr('opacity', 0.7)
+      .style('cursor', 'pointer')
+      .on('click', (event, d) => {
+        const citySelect = document.getElementById('city-select');
+        currentCity = (d.city_name_source === currentCity) ? ' ' : d.city_name_source;
+        citySelect.value = currentCity;
+        redrawPlot();
+        redrawMap();
+        updateCityInfo();
+      })
+      .merge(dots)
+      .attr('cx', d => lonToMapX(d.longitude))
+      .attr('cy', d => latToMapY(d.latitude))
+      .attr('fill', d => d.city_name_source === currentCity ? 'red' : 'steelblue');
+
+    dots.attr('fill', d => d.city_name_source === currentCity ? 'red' : 'steelblue');
+
+    dots.exit().remove();
+  }
+
   function redrawPlot() {
     const dayKey = String(currentDay);
     const records = (data[currentMonth] && data[currentMonth][dayKey]) || [];
@@ -365,6 +420,7 @@
         currentCity = (d.city === currentCity) ? ' ' : d.city;
         citySelect.value = currentCity;
         redrawPlot();
+        redrawMap();
         updateCityInfo();
       })
       .on('mouseover', (event, d) => {
