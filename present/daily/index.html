@@ -85,6 +85,12 @@
       pointer-events: none;
     }
 
+    #city-info {
+      font-size: 13px;
+      align-self: flex-end;
+      padding-bottom: 2px;
+    }
+
     .tooltip {
       position: absolute;
       background: rgba(0,0,0,0.75);
@@ -109,6 +115,7 @@
       <label class="dropdown-label" for="city-select">Track city</label>
       <select id="city-select"></select>
     </div>
+    <div id="city-info"></div>
   </div>
 
   <div id="slider-container">
@@ -232,6 +239,7 @@
       citySelect.addEventListener('change', () => {
         currentCity = citySelect.value;
         redrawPlot();
+        updateCityInfo();
       });
 
       setMonth(months[0]);
@@ -256,11 +264,13 @@
       currentDay = Number(slider.value);
       updateCurrentDayLabel();
       redrawPlot();
+      updateCityInfo();
     };
 
     currentDay = firstDay;
     updateCurrentDayLabel();
     redrawPlot();
+    updateCityInfo();
   }
 
   function updateCurrentDayLabel() {
@@ -285,6 +295,18 @@
     labelEl.style.left = (startWidth + leftPx) + 'px';
   }
 
+  function updateCityInfo() {
+    const el = document.getElementById('city-info');
+    if (currentCity === ' ') {
+      el.textContent = '';
+      return;
+    }
+    const dayKey = String(currentDay);
+    const records = (data[currentMonth] && data[currentMonth][dayKey]) || [];
+    const record = records.find(r => r.city === currentCity);
+    el.textContent = record ? `${record.temperature}\u00b0C, ${record.humidity}%` : '';
+  }
+
   function redrawPlot() {
     const dayKey = String(currentDay);
     const records = (data[currentMonth] && data[currentMonth][dayKey]) || [];
@@ -306,6 +328,7 @@
         currentCity = (d.city === currentCity) ? ' ' : d.city;
         citySelect.value = currentCity;
         redrawPlot();
+        updateCityInfo();
       })
       .on('mouseover', (event, d) => {
         tooltip.style.display = 'block';

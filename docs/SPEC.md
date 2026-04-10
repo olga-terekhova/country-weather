@@ -307,6 +307,7 @@ Runtime behavior: running docker compose up from the host inside the serve/ dire
     - width 100 px
   - a dropdown labeled "Track city" on the right to "Year and Month"
     - width 100 px
+  - an empty div to show detailed information about the city (city info) on the right to "Track city"
   - a horizontal slider below "Year and Month" and "Track city"
     - implemented as `HTML <input type="range">`
     - width 800 px
@@ -350,8 +351,11 @@ Runtime behavior: running docker compose up from the host inside the serve/ dire
         - dot is colored blue by default
         - dot is colored red if the city name equals the currently selected city
       - assign a label on hover with the exact values of city name, humidity and temperature
+  - city info
+    - empty if the current city is ' '
+    - if the current city is not ' ' then it shows the string: "{temperature}°C, {humidity}%"
 7. User interactions:
-  - a user can select a year-month string from the dropdown which triggers an update of slider and scatter plot for the 1st day of this month
-  - a user can move the slide between the start and end values for the current month, which triggers a redraw of the scatter plot for this day
-  - a user can select a city from the track city dropdown or unselect by choosing ' ', which triggers a redraw of the scatter plot.  
-  - alternatively, a user can select a city by clicking on the city dot. Clicking on the dot corresponding to a selected city unselects it to ' '. Both actions trigger a redraw of the scatter plot.  
+  - a user can select a year-month string from the dropdown which triggers an update of slider and scatter plot for the 1st day of this month, as well as the city info
+  - a user can move the slide between the start and end values for the current month, which triggers a redraw of the scatter plot for this day, as well as the city info
+  - a user can select a city from the track city dropdown or unselect by choosing ' ', which triggers a redraw of the scatter plot, as well as the city info
+  - alternatively, a user can select a city by clicking on the city dot. Clicking on the dot corresponding to a selected city unselects it to ' '. Both actions trigger a redraw of the scatter plot, as well as the city info
