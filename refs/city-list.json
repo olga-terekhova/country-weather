@@ -6,7 +6,8 @@
     "russian_name": "Абовян",
     "latitude": 40.2725,
     "longitude": 44.6278,
-    "google_maps_link": "https://www.google.com/maps/place/Abovyan,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Abovyan,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Abovyan"
   },
   {
     "city_name_source": "alaverdi",
@@ -15,7 +16,8 @@
     "russian_name": "Алаверди",
     "latitude": 41.0959,
     "longitude": 44.6617,
-    "google_maps_link": "https://www.google.com/maps/place/Alaverdi,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Alaverdi,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Alaverdi"
   },
   {
     "city_name_source": "aparan",
@@ -24,7 +26,8 @@
     "russian_name": "Апаран",
     "latitude": 40.5909,
     "longitude": 44.3594,
-    "google_maps_link": "https://www.google.com/maps/place/Aparan,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Aparan,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Aparan"
   },
   {
     "city_name_source": "ararat",
@@ -33,7 +36,8 @@
     "russian_name": "Арарат",
     "latitude": 39.8281,
     "longitude": 44.7022,
-    "google_maps_link": "https://www.google.com/maps/place/Ararat,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Ararat,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Ararat"
   },
   {
     "city_name_source": "armawir",
@@ -42,7 +46,8 @@
     "russian_name": "Армавир",
     "latitude": 40.1544,
     "longitude": 44.0383,
-    "google_maps_link": "https://www.google.com/maps/place/Armavir,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Armavir,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Armavir"
   },
   {
     "city_name_source": "artashat",
@@ -51,7 +56,8 @@
     "russian_name": "Арташат",
     "latitude": 39.9608,
     "longitude": 44.5489,
-    "google_maps_link": "https://www.google.com/maps/place/Artashat,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Artashat,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Artashat"
   },
   {
     "city_name_source": "artik",
@@ -60,7 +66,8 @@
     "russian_name": "Артик",
     "latitude": 40.6175,
     "longitude": 43.9739,
-    "google_maps_link": "https://www.google.com/maps/place/Artik,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Artik,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Artik"
   },
   {
     "city_name_source": "ashtarak",
@@ -69,16 +76,18 @@
     "russian_name": "Аштарак",
     "latitude": 40.2981,
     "longitude": 44.3603,
-    "google_maps_link": "https://www.google.com/maps/place/Ashtarak,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Ashtarak,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Ashtarak"
   },
   {
     "city_name_source": "astkhadzor",
-    "english_name": "Tsaghkadzor",
-    "armenian_name": "Ծաղկաձոր",
+    "english_name": "Astghadzor",
+    "armenian_name": "Աստղաձոր",
     "russian_name": "Астхадзор",
-    "latitude": 40.5314,
-    "longitude": 44.7156,
-    "google_maps_link": "https://www.google.com/maps/place/Tsaghkadzor,+Armenia"
+    "latitude": 40.12389,
+    "longitude": 45.35667,
+    "google_maps_link": "https://www.google.com/maps/place/Astghadzor,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Astghadzor"
   },
   {
     "city_name_source": "dilizhan",
@@ -87,7 +96,8 @@
     "russian_name": "Дилижан",
     "latitude": 40.7414,
     "longitude": 44.8631,
-    "google_maps_link": "https://www.google.com/maps/place/Dilijan,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Dilijan,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Dilijan"
   },
   {
     "city_name_source": "djermuk",
@@ -96,7 +106,8 @@
     "russian_name": "Джермук",
     "latitude": 39.8358,
     "longitude": 45.6739,
-    "google_maps_link": "https://www.google.com/maps/place/Jermuk,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Jermuk,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Jermuk"
   },
   {
     "city_name_source": "echmiadzin",
@@ -105,7 +116,8 @@
     "russian_name": "Вагаршапат",
     "latitude": 40.1728,
     "longitude": 44.2925,
-    "google_maps_link": "https://www.google.com/maps/place/Vagharshapat,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Vagharshapat,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Vagharshapat"
   },
   {
     "city_name_source": "ehegnadzor",
@@ -114,7 +126,8 @@
     "russian_name": "Ехегнадзор",
     "latitude": 39.7644,
     "longitude": 45.3327,
-    "google_maps_link": "https://www.google.com/maps/place/Yeghegnadzor,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Yeghegnadzor,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Yeghegnadzor"
   },
   {
     "city_name_source": "erevan",
@@ -123,7 +136,8 @@
     "russian_name": "Ереван",
     "latitude": 40.1872,
     "longitude": 44.5152,
-    "google_maps_link": "https://www.google.com/maps/place/Yerevan,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Yerevan,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Yerevan"
   },
   {
     "city_name_source": "gavar",
@@ -132,7 +146,8 @@
     "russian_name": "Гавар",
     "latitude": 40.355,
     "longitude": 45.1278,
-    "google_maps_link": "https://www.google.com/maps/place/Gavar,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Gavar,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Gavar"
   },
   {
     "city_name_source": "goris",
@@ -141,7 +156,8 @@
     "russian_name": "Горис",
     "latitude": 39.5092,
     "longitude": 46.3381,
-    "google_maps_link": "https://www.google.com/maps/place/Goris,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Goris,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Goris"
   },
   {
     "city_name_source": "gyumri",
@@ -150,7 +166,8 @@
     "russian_name": "Гюмри",
     "latitude": 40.7942,
     "longitude": 43.8453,
-    "google_maps_link": "https://www.google.com/maps/place/Gyumri,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Gyumri,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Gyumri"
   },
   {
     "city_name_source": "idjevan",
@@ -159,7 +176,8 @@
     "russian_name": "Иджеван",
     "latitude": 40.8739,
     "longitude": 45.1472,
-    "google_maps_link": "https://www.google.com/maps/place/Ijevan,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Ijevan,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Ijevan"
   },
   {
     "city_name_source": "kapan",
@@ -168,7 +186,8 @@
     "russian_name": "Капан",
     "latitude": 39.2072,
     "longitude": 46.4053,
-    "google_maps_link": "https://www.google.com/maps/place/Kapan,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Kapan,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Kapan"
   },
   {
     "city_name_source": "vanadzor",
@@ -177,6 +196,87 @@
     "russian_name": "Ванадзор",
     "latitude": 40.8128,
     "longitude": 44.4889,
-    "google_maps_link": "https://www.google.com/maps/place/Vanadzor,+Armenia"
+    "google_maps_link": "https://www.google.com/maps/place/Vanadzor,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Vanadzor"
+  },
+  {
+    "city_name_source": "hrazdan",
+    "english_name": "Hrazdan",
+    "armenian_name": "Հրազդան",
+    "russian_name": "Раздан",
+    "latitude": 40.4972,
+    "longitude": 44.7633,
+    "google_maps_link": "https://www.google.com/maps/place/Hrazdan,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Hrazdan"
+  },
+  {
+    "city_name_source": "martuni",
+    "english_name": "Martuni",
+    "armenian_name": "Մարտունի",
+    "russian_name": "Мартуни",
+    "latitude": 40.14,
+    "longitude": 45.3064,
+    "google_maps_link": "https://www.google.com/maps/place/Martuni,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Martuni"
+  },
+  {
+    "city_name_source": "megri",
+    "english_name": "Meghri",
+    "armenian_name": "Մեղրի",
+    "russian_name": "Мегри",
+    "latitude": 38.9072,
+    "longitude": 46.235,
+    "google_maps_link": "https://www.google.com/maps/place/Meghri,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Meghri"
+  },
+  {
+    "city_name_source": "sevan",
+    "english_name": "Sevan",
+    "armenian_name": "Սևան",
+    "russian_name": "Севан",
+    "latitude": 40.5442,
+    "longitude": 44.9453,
+    "google_maps_link": "https://www.google.com/maps/place/Sevan,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Sevan"
+  },
+  {
+    "city_name_source": "spitak",
+    "english_name": "Spitak",
+    "armenian_name": "Սպիտակ",
+    "russian_name": "Спитак",
+    "latitude": 40.8314,
+    "longitude": 44.2611,
+    "google_maps_link": "https://www.google.com/maps/place/Spitak,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Spitak"
+  },
+  {
+    "city_name_source": "stepanovan",
+    "english_name": "Stepanavan",
+    "armenian_name": "Ստեփանավան",
+    "russian_name": "Степанаван",
+    "latitude": 41.0097,
+    "longitude": 44.3833,
+    "google_maps_link": "https://www.google.com/maps/place/Stepanavan,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Stepanavan"
+  },
+  {
+    "city_name_source": "tashir",
+    "english_name": "Tashir",
+    "armenian_name": "Տաշիր",
+    "russian_name": "Ташир",
+    "latitude": 41.1219,
+    "longitude": 44.2833,
+    "google_maps_link": "https://www.google.com/maps/place/Tashir,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Tashir"
+  },
+  {
+    "city_name_source": "tsahkadzor",
+    "english_name": "Tsaghkadzor",
+    "armenian_name": "Ծաղկաձոր",
+    "russian_name": "Цахкадзор",
+    "latitude": 40.5314,
+    "longitude": 44.7156,
+    "google_maps_link": "https://www.google.com/maps/place/Tsaghkadzor,+Armenia",
+    "wiki_link": "https://en.wikipedia.org/wiki/Tsaghkadzor"
   }
 ]

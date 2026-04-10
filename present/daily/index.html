@@ -306,7 +306,8 @@
     if (!record || !meta) { el.innerHTML = ''; return; }
     el.innerHTML = `${record.temperature}\u00b0C, ${record.humidity}%`
       + `\u00a0\u00a0|\u00a0\u00a0${meta.english_name} ${meta.armenian_name} ${meta.russian_name}`
-      + `\u00a0\u00a0<a href="${meta.google_maps_link}" target="_blank">Map</a>`;
+      + `\u00a0\u00a0<a href="${meta.google_maps_link}" target="_blank">Map</a>`
+      + `\u00a0<a href="${meta.wiki_link}" target="_blank">Wiki</a>`;
   }
 
   function redrawPlot() {
