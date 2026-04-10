@@ -324,6 +324,8 @@ Runtime behavior: running docker compose up from the host inside the serve/ dire
     - first level has year-month values, like "2025-08"
     - second level has int-like day values, like "1", "20"
     - third level has several items for city and weather data for that year, month and day, like {"city": "toronto", "temperature": 37, "humidity": 30}
+  - read `city-list.json` at the page load
+    - keys are "city_name_source", "english_name", "armenian_name", "russian_name", "latitude","longitude", "google_maps_link"
   - get the min and max values for temperature and humidity from the whole dataset
     - define the visible dimensions of both axis as [min value of the metric - 10%; max value of the metric + 10%]
     - add evenly spaced ticks on the plot axes
@@ -353,7 +355,9 @@ Runtime behavior: running docker compose up from the host inside the serve/ dire
       - assign a label on hover with the exact values of city name, humidity and temperature
   - city info
     - empty if the current city is ' '
-    - if the current city is not ' ' then it shows the string: "{temperature}°C, {humidity}%"
+    - if the current city is not ' ' then
+      - find this city in the city list reference looking up the key "city_name_source". 
+      - display the string: "{temperature}°C, {humidity}%  | {english_name} {armenian_name} {russian_name} <a href='{google_maps_link}'>Map</a>"
 7. User interactions:
   - a user can select a year-month string from the dropdown which triggers an update of slider and scatter plot for the 1st day of this month, as well as the city info
   - a user can move the slide between the start and end values for the current month, which triggers a redraw of the scatter plot for this day, as well as the city info
@@ -361,7 +365,7 @@ Runtime behavior: running docker compose up from the host inside the serve/ dire
   - alternatively, a user can select a city by clicking on the city dot. Clicking on the dot corresponding to a selected city unselects it to ' '. Both actions trigger a redraw of the scatter plot, as well as the city info
 
 ## REQ-10. Create a reference of the cities
-One time task of data compilation and augmentation, saved to `refs/city-list.csv` and `refs/city-list.json`.
+One time task of data compilation and augmentation, saved to `refs/city-list.csv` and `refs/city-list.json`, copied to 'present/daily/city-list.json`.
 
 ### Description:
 Armenia Cities — reference table of 20 Armenian cities, sourced from a city list on pogoda.mail.ru and augmented with geographic and multilingual name data.
@@ -374,3 +378,4 @@ armenian_name — the city name in the Armenian script, sourced from Wikipedia.
 russian_name — the city name in Russian (Cyrillic), extracted directly from the linked HTML page (pogoda.mail.ru), matched to each city via its URL slug.
 latitude / longitude — approximate city center coordinates, sourced from Wikipedia and geographic reference data.
 google_maps_link — a direct Google Maps URL constructed from the latitude and longitude in the format https://www.google.com/maps?q=lat,lon.
+

@@ -170,15 +170,13 @@
 
   let xScale, yScale;
   let data = {};
+  let cityList = {};
   let currentMonth, currentDay, currentCity = ' ';
 
-  function pad10(v) { return v * 1.1; }
-  function pad10low(v) { return v < 0 ? v * 1.1 : v * 0.9; }
-
-  fetch('daily.json')
-    .then(r => r.json())
-    .then(json => {
-      data = json;
+  Promise.all([fetch('daily.json').then(r => r.json()), fetch('city-list.json').then(r => r.json())])
+    .then(([dailyJson, cityListJson]) => {
+      data = dailyJson;
+      cityList = Object.fromEntries(cityListJson.map(c => [c.city_name_source, c]));
 
       // Compute global min/max
       let allTemps = [], allHumids = [];
@@ -298,13 +296,17 @@
   function updateCityInfo() {
     const el = document.getElementById('city-info');
     if (currentCity === ' ') {
-      el.textContent = '';
+      el.innerHTML = '';
       return;
     }
     const dayKey = String(currentDay);
     const records = (data[currentMonth] && data[currentMonth][dayKey]) || [];
     const record = records.find(r => r.city === currentCity);
-    el.textContent = record ? `${record.temperature}\u00b0C, ${record.humidity}%` : '';
+    const meta = cityList[currentCity];
+    if (!record || !meta) { el.innerHTML = ''; return; }
+    el.innerHTML = `${record.temperature}\u00b0C, ${record.humidity}%`
+      + `\u00a0\u00a0|\u00a0\u00a0${meta.english_name} ${meta.armenian_name} ${meta.russian_name}`
+      + `\u00a0\u00a0<a href="${meta.google_maps_link}" target="_blank">Map</a>`;
   }
 
   function redrawPlot() {
