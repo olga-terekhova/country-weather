@@ -23,4 +23,4 @@ uv run prepare/extract_weather.py page/cities-months && head -3 page/cities-mont
 uv run prepare/union_weather.py page/cities-months --output /tmp/cities-days-test.csv 2>&1
 wc -l /tmp/cities-days-test.csv && head -2 /tmp/cities-days-test.csv && tail -2 /tmp/cities-days-test.csv 
 
-uv run prepare/union_weather.py page/cities-months --output prepare/cities-days/cities-days-test.csv
+uv run prepare/union_weather.py page/cities-months --output prepare/cities-days/cities-days.csv
