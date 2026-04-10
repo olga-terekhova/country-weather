@@ -13,6 +13,20 @@
       display: inline-flex;
       flex-direction: column;
       gap: 8px;
+      align-items: flex-start;
+    }
+
+    #dropdowns {
+      display: flex;
+      flex-direction: row;
+      gap: 16px;
+      align-items: flex-end;
+    }
+
+    .dropdown-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .dropdown-label {
@@ -62,12 +76,8 @@
     }
 
     .dot {
-      fill: steelblue;
       opacity: 0.7;
-    }
-
-    .dot:hover {
-      fill: orange;
+      cursor: pointer;
     }
 
     .city-label {
@@ -90,11 +100,16 @@
 <body>
 
 <div id="controls">
-  <label class="dropdown-label" for="month-select">Year and Month</label>
-  <select id="month-select"></select>
-
-  <label class="dropdown-label" for="city-select">Track city</label>
-  <select id="city-select"></select>
+  <div id="dropdowns">
+    <div class="dropdown-group">
+      <label class="dropdown-label" for="month-select">Year and Month</label>
+      <select id="month-select"></select>
+    </div>
+    <div class="dropdown-group">
+      <label class="dropdown-label" for="city-select">Track city</label>
+      <select id="city-select"></select>
+    </div>
+  </div>
 
   <div id="slider-container">
     <div id="current-day-label"><span id="current-day-text"></span></div>
@@ -112,7 +127,7 @@
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
   const WIDTH = 800;
-  const HEIGHT = 500;
+  const HEIGHT = 400;
   const MARGIN = { top: 20, right: 20, bottom: 50, left: 55 };
 
   const svg = d3.select('#plot')
@@ -148,7 +163,7 @@
 
   let xScale, yScale;
   let data = {};
-  let currentMonth, currentDay;
+  let currentMonth, currentDay, currentCity = ' ';
 
   function pad10(v) { return v * 1.1; }
   function pad10low(v) { return v < 0 ? v * 1.1 : v * 0.9; }
@@ -185,7 +200,7 @@
       xAxisG.call(d3.axisBottom(xScale).ticks(8));
       yAxisG.call(d3.axisLeft(yScale).ticks(8));
 
-      // Populate dropdown
+      // Populate year-month dropdown
       const months = Object.keys(data);
       const select = document.getElementById('month-select');
       months.forEach(m => {
@@ -197,6 +212,26 @@
 
       select.addEventListener('change', () => {
         setMonth(select.value);
+      });
+
+      // Populate track city dropdown
+      const cities = Array.from(new Set(
+        Object.values(data).flatMap(month =>
+          Object.values(month).flatMap(day => day.map(item => item.city))
+        )
+      )).sort();
+
+      const citySelect = document.getElementById('city-select');
+      [' ', ...cities].forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        citySelect.appendChild(opt);
+      });
+      citySelect.value = ' ';
+      citySelect.addEventListener('change', () => {
+        currentCity = citySelect.value;
+        redrawPlot();
       });
 
       setMonth(months[0]);
@@ -265,6 +300,13 @@
     merged.select('circle')
       .attr('cx', d => xScale(d.humidity))
       .attr('cy', d => yScale(d.temperature))
+      .attr('fill', d => d.city === currentCity ? 'red' : 'steelblue')
+      .on('click', (event, d) => {
+        const citySelect = document.getElementById('city-select');
+        currentCity = (d.city === currentCity) ? ' ' : d.city;
+        citySelect.value = currentCity;
+        redrawPlot();
+      })
       .on('mouseover', (event, d) => {
         tooltip.style.display = 'block';
         tooltip.innerHTML = `${d.city}<br>Humidity: ${d.humidity}%<br>Temperature: ${d.temperature}\u00b0C`;
