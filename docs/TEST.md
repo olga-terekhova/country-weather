@@ -20,12 +20,15 @@ cd page
 uv run prepare/extract_weather.py page/cities-months && head -3 page/cities-months/abovyan-august-2025.csv
 
 ## REQ-6
+### First test
 uv run prepare/union_weather.py page/cities-months --output /tmp/cities-days-test.csv 2>&1
 wc -l /tmp/cities-days-test.csv && head -2 /tmp/cities-days-test.csv && tail -2 /tmp/cities-days-test.csv 
 
+### Target
 uv run prepare/union_weather.py page/cities-months --output prepare/cities-days/cities-days.csv
 
 ## REQ-7
+### First test
 uv run present/build_daily_json.py prepare/cities-days/cities-days.csv /tmp/weather-out
 python3 -c "
 import json
