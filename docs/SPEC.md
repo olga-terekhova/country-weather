@@ -336,7 +336,7 @@ Runtime behavior: running docker compose up from the host inside the serve/ dire
     - add evenly spaced ticks on the plot axes
     - formulate how to translate any given pair of humidity and temperature into the coordinates on the scatter plot
   - collect the first level keys from the json as year-month strings
-  - populate the year-month dropdown values with the year-month strings
+  - populate the year-month dropdown values with the year-month strings in the descending order
   - set the current year-month value as the first item in the collection
   - set the current day as the first day in the current month
   - collect all distinct values for a city name from the dataset

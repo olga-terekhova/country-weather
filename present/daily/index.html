@@ -267,7 +267,7 @@
       yAxisG.call(d3.axisLeft(yScale).ticks(8));
 
       // Populate year-month dropdown
-      const months = Object.keys(data);
+      const months = Object.keys(data).sort().reverse();
       const select = document.getElementById('month-select');
       months.forEach(m => {
         const opt = document.createElement('option');
