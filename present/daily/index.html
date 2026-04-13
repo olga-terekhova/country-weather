@@ -1,143 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Daily City Weather</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily City Weather</title>
+<style>
+body {
+  font-family: sans-serif;
+  padding: 20px;
+}
 
-    #controls {
-      display: inline-flex;
-      flex-direction: column;
-      gap: 8px;
-      align-items: flex-start;
-    }
+#controls {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
 
-    #dropdowns {
-      display: flex;
-      flex-direction: row;
-      gap: 16px;
-      align-items: flex-end;
-    }
+#dropdowns {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: flex-end;
+}
 
-    .dropdown-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
+.dropdown-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
-    .dropdown-label {
-      font-size: 13px;
-      font-weight: bold;
-    }
+.dropdown-label {
+  font-size: 13px;
+  font-weight: bold;
+}
 
-    #month-select, #city-select {
-      width: 100px;
-    }
+#month-select, #city-select {
+  width: 100px;
+}
 
-    #slider-container {
-      display: flex;
-      flex-direction: column;
-      width: 700px;
-    }
+#slider-container {
+  display: flex;
+  flex-direction: column;
+  /* Width matches the scatter plot SVG total width (600 + 55 + 20 margins). */
+  width: 675px;
+  max-width: 100%;
+}
 
-    #current-day-label {
-      font-size: 12px;
-      text-align: left;
-      min-height: 16px;
-      position: relative;
-    }
+#current-day-label {
+  font-size: 12px;
+  text-align: left;
+  min-height: 16px;
+  position: relative;
+}
 
-    #current-day-label span {
-      position: absolute;
-      transform: translateX(-50%);
-    }
+#current-day-label span {
+  position: absolute;
+  transform: translateX(-50%);
+}
 
-    #slider-row {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+#slider-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 
-    #day-slider {
-      flex: 1;
-    }
+#day-slider {
+  flex: 1;
+}
 
-    #start-label, #end-label {
-      font-size: 12px;
-      white-space: nowrap;
-    }
+#start-label, #end-label {
+  font-size: 12px;
+  white-space: nowrap;
+}
 
-    #plot {
-      margin-top: 4px;
-    }
+#plot {
+  margin-top: 4px;
+  /* Allow scatter SVG to scroll horizontally on very narrow screens
+     rather than breaking the layout. */
+  overflow-x: auto;
+  display: block;
+}
 
-    .dot {
-      opacity: 0.7;
-      cursor: pointer;
-    }
+.dot {
+  opacity: 0.7;
+  cursor: pointer;
+}
 
-    .city-label {
-      font-size: 11px;
-      pointer-events: none;
-    }
+.city-label {
+  font-size: 11px;
+  pointer-events: none;
+}
 
-    #city-info {
-      font-size: 13px;
-      align-self: flex-end;
-      padding-bottom: 2px;
-    }
+#city-info {
+  font-size: 13px;
+  align-self: flex-end;
+  padding-bottom: 2px;
+}
 
-    #page {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+#page {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
-    #bottom-panes {
-      display: flex;
-      flex-direction: row;
-      align-items: flex-start;
-      gap: 24px;
-    }
+#bottom-panes {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 24px;
+  /* On narrow screens the panes wrap so map falls below the scatter plot. */
+  flex-wrap: wrap;
+}
 
-    #bottom-left-pane {
-      width: 800px;
-    }
+#bottom-left-pane {
+  /* Shrinks on mobile; scrolls horizontally if viewport is very narrow. */
+  flex: 1 1 675px;
+  min-width: 0;
+  overflow-x: auto;
+}
 
-    #bottom-right-pane {
-      width: 400px;
-      position: relative;
-    }
+#bottom-right-pane {
+  /* 400px on desktop; shrinks proportionally on mobile down to 200px. */
+  flex: 0 1 400px;
+  min-width: 200px;
+}
 
-    #bottom-right-pane img {
-      width: 100%;
-      display: block;
-    }
+/*
+ * Single SVG that contains both the map image and the city dots.
+ * width: 100% makes it fill #bottom-right-pane at any size.
+ * height: auto preserves the aspect ratio declared in viewBox.
+ * All dot coordinates are in the native 1169x1198 pixel space,
+ * so they scale perfectly with the SVG -- no JS measurement needed.
+ */
+#map-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
 
-    #map-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-
-    .tooltip {
-      position: absolute;
-      background: rgba(0,0,0,0.75);
-      color: white;
-      padding: 4px 8px;
-      font-size: 12px;
-      border-radius: 4px;
-      pointer-events: none;
-      display: none;
-    }
-  </style>
+.tooltip {
+  position: absolute;
+  background: rgba(0,0,0,0.75);
+  color: white;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  pointer-events: none;
+  display: none;
+}
+</style>
 </head>
 <body>
-
 <div id="page">
   <div id="controls">
     <div id="dropdowns">
@@ -151,7 +165,6 @@
       </div>
       <div id="city-info"></div>
     </div>
-
     <div id="slider-container">
       <div id="current-day-label"><span id="current-day-text"></span></div>
       <div id="slider-row">
@@ -166,282 +179,294 @@
     <div id="bottom-left-pane">
       <svg id="plot"></svg>
     </div>
+
     <div id="bottom-right-pane">
-      <img src="Armenia_location_map.svg" alt="Armenia location map">
-      <svg id="map-overlay"></svg>
+      <!--
+        Single SVG: the map image and city dots share one coordinate space.
+        viewBox matches the native pixel dimensions of Armenia_location_map.svg
+        (1169 wide x 1198 tall). CSS width:100% on #map-svg scales everything
+        together, so dots never drift from the map regardless of screen width.
+      -->
+      <svg id="map-svg"
+           viewBox="0 0 1169 1198"
+           preserveAspectRatio="xMidYMid meet"
+           xmlns="http://www.w3.org/2000/svg"
+           xmlns:xlink="http://www.w3.org/1999/xlink">
+        <image href="Armenia_location_map.svg"
+               x="0" y="0" width="1169" height="1198" />
+        <g id="map-dots"></g>
+      </svg>
     </div>
   </div>
 </div>
+
 <div class="tooltip" id="tooltip"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-  const WIDTH = 600;
-  const HEIGHT = 400;
-  const MARGIN = { top: 20, right: 20, bottom: 50, left: 55 };
+const WIDTH  = 600;
+const HEIGHT = 400;
+const MARGIN = { top: 20, right: 20, bottom: 50, left: 55 };
 
-  // Map overlay
-  const MAP_N = 41.4, MAP_S = 38.8, MAP_W = 43.4, MAP_E = 46.7;
-  const MAP_DISPLAY_W = 400;
-  const MAP_DISPLAY_H = MAP_DISPLAY_W * (1198 / 1169);
+// Geographic bounds of the map image.
+const MAP_N = 41.4, MAP_S = 38.8, MAP_W = 43.4, MAP_E = 46.7;
 
-  const mapSvg = d3.select('#map-overlay')
-    .attr('width', MAP_DISPLAY_W)
-    .attr('height', MAP_DISPLAY_H);
+// Native pixel dimensions of Armenia_location_map.svg.
+// These must match the viewBox on #map-svg so that lonToMapX / latToMapY
+// return coordinates in the same space the SVG uses internally.
+// CSS handles all display scaling -- these constants never change.
+const MAP_W_PX = 1169;
+const MAP_H_PX = 1198;
 
-  const mapDotsG = mapSvg.append('g');
+// Dot radius in the native 1169x1198 coordinate space.
+// Larger than the old 5px because the SVG shrinks on mobile, so
+// a bigger native radius keeps dots visible and tappable at small sizes.
+const MAP_DOT_R = 10;
 
-  function lonToMapX(lon) {
-    return (lon - MAP_W) / (MAP_E - MAP_W) * MAP_DISPLAY_W;
-  }
-  function latToMapY(lat) {
-    return (MAP_N - lat) / (MAP_N - MAP_S) * MAP_DISPLAY_H;
-  }
+// Convert geographic coordinates to SVG-space pixels.
+function lonToMapX(lon) {
+  return (lon - MAP_W) / (MAP_E - MAP_W) * MAP_W_PX;
+}
+function latToMapY(lat) {
+  return (MAP_N - lat) / (MAP_N - MAP_S) * MAP_H_PX;
+}
 
-  const svg = d3.select('#plot')
-    .attr('width', WIDTH + MARGIN.left + MARGIN.right)
-    .attr('height', HEIGHT + MARGIN.top + MARGIN.bottom);
+// Select the <g> inside #map-svg where city dots will be appended.
+const mapDotsG = d3.select('#map-dots');
 
-  const g = svg.append('g')
-    .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
+// Scatter plot SVG setup (unchanged from original).
+const svg = d3.select('#plot')
+  .attr('width',  WIDTH  + MARGIN.left + MARGIN.right)
+  .attr('height', HEIGHT + MARGIN.top  + MARGIN.bottom);
 
-  // Axes groups
-  const xAxisG = g.append('g').attr('transform', `translate(0,${HEIGHT})`);
-  const yAxisG = g.append('g');
+const g = svg.append('g')
+  .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
-  // Axis labels
-  g.append('text')
-    .attr('x', WIDTH / 2)
-    .attr('y', HEIGHT + MARGIN.bottom - 6)
-    .attr('text-anchor', 'middle')
-    .attr('font-size', 13)
-    .text('Humidity, %');
+const xAxisG = g.append('g').attr('transform', `translate(0,${HEIGHT})`);
+const yAxisG = g.append('g');
 
-  g.append('text')
-    .attr('transform', 'rotate(-90)')
-    .attr('x', -HEIGHT / 2)
-    .attr('y', -MARGIN.left + 14)
-    .attr('text-anchor', 'middle')
-    .attr('font-size', 13)
-    .text('Temperature, \u00b0C');
+g.append('text')
+  .attr('x', WIDTH / 2)
+  .attr('y', HEIGHT + MARGIN.bottom - 6)
+  .attr('text-anchor', 'middle')
+  .attr('font-size', 13)
+  .text('Humidity, %');
 
-  const dotsG = g.append('g');
+g.append('text')
+  .attr('transform', 'rotate(-90)')
+  .attr('x', -HEIGHT / 2)
+  .attr('y', -MARGIN.left + 14)
+  .attr('text-anchor', 'middle')
+  .attr('font-size', 13)
+  .text('Temperature, \u00b0C');
 
-  const tooltip = document.getElementById('tooltip');
+const dotsG = g.append('g');
 
-  let xScale, yScale;
-  let data = {};
-  let cityList = {};
-  let currentMonth, currentDay, currentCity = ' ';
+const tooltip = document.getElementById('tooltip');
 
-  Promise.all([fetch('daily.json').then(r => r.json()), fetch('city-list.json').then(r => r.json())])
-    .then(([dailyJson, cityListJson]) => {
-      data = dailyJson;
-      cityList = Object.fromEntries(cityListJson.map(c => [c.city_name_source, c]));
+let xScale, yScale;
+let data = {};
+let cityList = {};
+let currentMonth, currentDay, currentCity = ' ';
 
-      // Compute global min/max
-      let allTemps = [], allHumids = [];
-      for (const month of Object.values(data)) {
-        for (const day of Object.values(month)) {
-          for (const item of day) {
-            allTemps.push(item.temperature);
-            allHumids.push(item.humidity);
-          }
-        }
+Promise.all([
+  fetch('daily.json').then(r => r.json()),
+  fetch('city-list.json').then(r => r.json())
+])
+.then(([dailyJson, cityListJson]) => {
+  data     = dailyJson;
+  cityList = Object.fromEntries(cityListJson.map(c => [c.city_name_source, c]));
+
+  // Compute global min/max for fixed axis domains.
+  let allTemps = [], allHumids = [];
+  for (const month of Object.values(data)) {
+    for (const day of Object.values(month)) {
+      for (const item of day) {
+        allTemps.push(item.temperature);
+        allHumids.push(item.humidity);
       }
+    }
+  }
 
-      const tMin = d3.min(allTemps);
-      const tMax = d3.max(allTemps);
-      const hMin = d3.min(allHumids);
-      const hMax = d3.max(allHumids);
+  xScale = d3.scaleLinear()
+    .domain([d3.min(allHumids) * 0.9, d3.max(allHumids) * 1.1])
+    .range([0, WIDTH]);
 
-      xScale = d3.scaleLinear()
-        .domain([hMin * 0.9, hMax * 1.1])
-        .range([0, WIDTH]);
+  yScale = d3.scaleLinear()
+    .domain([d3.min(allTemps) * 0.9, d3.max(allTemps) * 1.1])
+    .range([HEIGHT, 0]);
 
-      yScale = d3.scaleLinear()
-        .domain([tMin * 0.9, tMax * 1.1])
-        .range([HEIGHT, 0]);
+  xAxisG.call(d3.axisBottom(xScale).ticks(8));
+  yAxisG.call(d3.axisLeft(yScale).ticks(8));
 
-      xAxisG.call(d3.axisBottom(xScale).ticks(8));
-      yAxisG.call(d3.axisLeft(yScale).ticks(8));
+  // Populate year-month dropdown.
+  const months = Object.keys(data).sort().reverse();
+  const select = document.getElementById('month-select');
+  months.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value   = m;
+    opt.textContent = m;
+    select.appendChild(opt);
+  });
+  select.addEventListener('change', () => setMonth(select.value));
 
-      // Populate year-month dropdown
-      const months = Object.keys(data).sort().reverse();
-      const select = document.getElementById('month-select');
-      months.forEach(m => {
-        const opt = document.createElement('option');
-        opt.value = m;
-        opt.textContent = m;
-        select.appendChild(opt);
-      });
+  // Populate track-city dropdown.
+  const cities = Array.from(new Set(
+    Object.values(data).flatMap(month =>
+      Object.values(month).flatMap(day => day.map(item => item.city))
+    )
+  )).sort();
 
-      select.addEventListener('change', () => {
-        setMonth(select.value);
-      });
-
-      // Populate track city dropdown
-      const cities = Array.from(new Set(
-        Object.values(data).flatMap(month =>
-          Object.values(month).flatMap(day => day.map(item => item.city))
-        )
-      )).sort();
-
-      const citySelect = document.getElementById('city-select');
-      [' ', ...cities].forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c;
-        opt.textContent = c;
-        citySelect.appendChild(opt);
-      });
-      citySelect.value = ' ';
-      citySelect.addEventListener('change', () => {
-        currentCity = citySelect.value;
-        redrawPlot();
-        redrawMap();
-        updateCityInfo();
-      });
-
-      setMonth(months[0]);
-    });
-
-  function setMonth(month) {
-    currentMonth = month;
-    const days = Object.keys(data[month]).map(Number).sort((a, b) => a - b);
-    const firstDay = days[0];
-    const lastDay = days[days.length - 1];
-
-    const slider = document.getElementById('day-slider');
-    slider.min = firstDay;
-    slider.max = lastDay;
-    slider.step = 1;
-    slider.value = firstDay;
-
-    document.getElementById('start-label').textContent = firstDay;
-    document.getElementById('end-label').textContent = lastDay;
-
-    slider.oninput = () => {
-      currentDay = Number(slider.value);
-      updateCurrentDayLabel();
-      redrawPlot();
-      updateCityInfo();
-    };
-
-    currentDay = firstDay;
-    updateCurrentDayLabel();
+  const citySelect = document.getElementById('city-select');
+  [' ', ...cities].forEach(c => {
+    const opt = document.createElement('option');
+    opt.value       = c;
+    opt.textContent = c;
+    citySelect.appendChild(opt);
+  });
+  citySelect.value = ' ';
+  citySelect.addEventListener('change', () => {
+    currentCity = citySelect.value;
     redrawPlot();
     redrawMap();
     updateCityInfo();
-  }
+  });
 
-  function updateCurrentDayLabel() {
-    const slider = document.getElementById('day-slider');
-    const min = Number(slider.min);
-    const max = Number(slider.max);
-    const val = Number(slider.value);
+  setMonth(months[0]);
+});
 
-    // Calculate thumb position as fraction of track width
-    const fraction = (val - min) / (max - min);
-    const sliderEl = slider;
-    const trackWidth = sliderEl.offsetWidth;
-    // Native range thumb offset formula
-    const thumbWidth = 16; // approximate px
-    const leftPx = fraction * (trackWidth - thumbWidth) + thumbWidth / 2;
+function setMonth(month) {
+  currentMonth = month;
 
-    const labelEl = document.getElementById('current-day-text');
-    labelEl.textContent = val;
-    // Offset relative to slider-container: slider-row has start-label before the slider
-    const startLabel = document.getElementById('start-label');
-    const startWidth = startLabel.offsetWidth + 6; // gap
-    labelEl.style.left = (startWidth + leftPx) + 'px';
-  }
+  const days     = Object.keys(data[month]).map(Number).sort((a, b) => a - b);
+  const firstDay = days[0];
+  const lastDay  = days[days.length - 1];
 
-  function updateCityInfo() {
-    const el = document.getElementById('city-info');
-    if (currentCity === ' ') {
-      el.innerHTML = '';
-      return;
-    }
-    const dayKey = String(currentDay);
-    const records = (data[currentMonth] && data[currentMonth][dayKey]) || [];
-    const record = records.find(r => r.city === currentCity);
-    const meta = cityList[currentCity];
-    if (!record || !meta) { el.innerHTML = ''; return; }
-    el.innerHTML = `${record.temperature}\u00b0C, ${record.humidity}%`
-      + `\u00a0\u00a0|\u00a0\u00a0${meta.english_name} ${meta.armenian_name} ${meta.russian_name}`
-      + `\u00a0\u00a0<a href="${meta.google_maps_link}" target="_blank">Map</a>`
-      + `\u00a0<a href="${meta.wiki_link}" target="_blank">Wiki</a>`;
-  }
+  const slider  = document.getElementById('day-slider');
+  slider.min    = firstDay;
+  slider.max    = lastDay;
+  slider.step   = 1;
+  slider.value  = firstDay;
 
-  function redrawMap() {
-    const dots = mapDotsG.selectAll('.map-dot').data(Object.values(cityList), d => d.city_name_source);
+  document.getElementById('start-label').textContent = firstDay;
+  document.getElementById('end-label').textContent   = lastDay;
 
-    dots.enter().append('circle')
-      .attr('class', 'map-dot')
-      .attr('r', 5)
-      .attr('opacity', 0.7)
-      .style('cursor', 'pointer')
-      .on('click', (event, d) => {
-        const citySelect = document.getElementById('city-select');
-        currentCity = (d.city_name_source === currentCity) ? ' ' : d.city_name_source;
-        citySelect.value = currentCity;
-        redrawPlot();
-        redrawMap();
-        updateCityInfo();
-      })
-      .merge(dots)
-      .attr('cx', d => lonToMapX(d.longitude))
-      .attr('cy', d => latToMapY(d.latitude))
-      .attr('fill', d => d.city_name_source === currentCity ? 'red' : 'steelblue');
+  slider.oninput = () => {
+    currentDay = Number(slider.value);
+    updateCurrentDayLabel();
+    redrawPlot();
+    updateCityInfo();
+  };
 
-    dots.attr('fill', d => d.city_name_source === currentCity ? 'red' : 'steelblue');
+  currentDay = firstDay;
+  updateCurrentDayLabel();
+  redrawPlot();
+  redrawMap();
+  updateCityInfo();
+}
 
-    dots.exit().remove();
-  }
+function updateCurrentDayLabel() {
+  const slider     = document.getElementById('day-slider');
+  const min        = Number(slider.min);
+  const max        = Number(slider.max);
+  const val        = Number(slider.value);
+  const fraction   = (val - min) / (max - min);
+  const trackWidth = slider.offsetWidth;
+  const thumbWidth = 16; // approximate native thumb width in px
+  const leftPx     = fraction * (trackWidth - thumbWidth) + thumbWidth / 2;
 
-  function redrawPlot() {
-    const dayKey = String(currentDay);
-    const records = (data[currentMonth] && data[currentMonth][dayKey]) || [];
+  const labelEl    = document.getElementById('current-day-text');
+  labelEl.textContent = val;
 
-    const dots = dotsG.selectAll('.dot-group').data(records, d => d.city);
+  const startWidth = document.getElementById('start-label').offsetWidth + 6;
+  labelEl.style.left = (startWidth + leftPx) + 'px';
+}
 
-    const enter = dots.enter().append('g').attr('class', 'dot-group');
-    enter.append('circle').attr('class', 'dot').attr('r', 5);
-    enter.append('text').attr('class', 'city-label');
+function updateCityInfo() {
+  const el = document.getElementById('city-info');
+  if (currentCity === ' ') { el.innerHTML = ''; return; }
 
-    const merged = enter.merge(dots);
+  const records = (data[currentMonth] && data[currentMonth][String(currentDay)]) || [];
+  const record  = records.find(r => r.city === currentCity);
+  const meta    = cityList[currentCity];
+  if (!record || !meta) { el.innerHTML = ''; return; }
 
-    merged.select('circle')
-      .attr('cx', d => xScale(d.humidity))
-      .attr('cy', d => yScale(d.temperature))
-      .attr('fill', d => d.city === currentCity ? 'red' : 'steelblue')
-      .on('click', (event, d) => {
-        const citySelect = document.getElementById('city-select');
-        currentCity = (d.city === currentCity) ? ' ' : d.city;
-        citySelect.value = currentCity;
-        redrawPlot();
-        redrawMap();
-        updateCityInfo();
-      })
-      .on('mouseover', (event, d) => {
-        tooltip.style.display = 'block';
-        tooltip.innerHTML = `${d.city}<br>Humidity: ${d.humidity}%<br>Temperature: ${d.temperature}\u00b0C`;
-      })
-      .on('mousemove', (event) => {
-        tooltip.style.left = (event.pageX + 12) + 'px';
-        tooltip.style.top = (event.pageY - 28) + 'px';
-      })
-      .on('mouseout', () => {
-        tooltip.style.display = 'none';
-      });
+  el.innerHTML =
+    `${record.temperature}\u00b0C, ${record.humidity}%`
+    + `\u00a0\u00a0|\u00a0\u00a0${meta.english_name} ${meta.armenian_name} ${meta.russian_name}`
+    + `\u00a0\u00a0<a href="${meta.google_maps_link}" target="_blank">Map</a>`
+    + `\u00a0<a href="${meta.wiki_link}" target="_blank">Wiki</a>`;
+}
 
-    merged.select('text')
-      .attr('x', d => xScale(d.humidity) + 7)
-      .attr('y', d => yScale(d.temperature) + 4)
-      .text(d => d.city);
+function redrawMap() {
+  // Bind all cities from cityList (static -- does not change with day/month).
+  const dots = mapDotsG
+    .selectAll('.map-dot')
+    .data(Object.values(cityList), d => d.city_name_source);
 
-    dots.exit().remove();
-  }
+  dots.enter().append('circle')
+    .attr('class', 'map-dot')
+    // Radius is in the native 1169x1198 coordinate space.
+    // CSS scaling of #map-svg shrinks it proportionally on mobile.
+    .attr('r', MAP_DOT_R)
+    .attr('opacity', 0.7)
+    .style('cursor', 'pointer')
+    .on('click', (event, d) => {
+      currentCity = (d.city_name_source === currentCity) ? ' ' : d.city_name_source;
+      document.getElementById('city-select').value = currentCity;
+      redrawPlot();
+      redrawMap();
+      updateCityInfo();
+    })
+    .merge(dots)
+    .attr('cx',   d => lonToMapX(d.longitude))
+    .attr('cy',   d => latToMapY(d.latitude))
+    .attr('fill', d => d.city_name_source === currentCity ? 'red' : 'steelblue');
+
+  dots.attr('fill', d => d.city_name_source === currentCity ? 'red' : 'steelblue');
+  dots.exit().remove();
+}
+
+function redrawPlot() {
+  const records = (data[currentMonth] && data[currentMonth][String(currentDay)]) || [];
+
+  const dots  = dotsG.selectAll('.dot-group').data(records, d => d.city);
+  const enter = dots.enter().append('g').attr('class', 'dot-group');
+
+  enter.append('circle').attr('class', 'dot').attr('r', 5);
+  enter.append('text').attr('class', 'city-label');
+
+  const merged = enter.merge(dots);
+
+  merged.select('circle')
+    .attr('cx',   d => xScale(d.humidity))
+    .attr('cy',   d => yScale(d.temperature))
+    .attr('fill', d => d.city === currentCity ? 'red' : 'steelblue')
+    .on('click', (event, d) => {
+      currentCity = (d.city === currentCity) ? ' ' : d.city;
+      document.getElementById('city-select').value = currentCity;
+      redrawPlot();
+      redrawMap();
+      updateCityInfo();
+    })
+    .on('mouseover', (event, d) => {
+      tooltip.style.display = 'block';
+      tooltip.innerHTML =
+        `${d.city}<br>Humidity: ${d.humidity}%<br>Temperature: ${d.temperature}\u00b0C`;
+    })
+    .on('mousemove', (event) => {
+      tooltip.style.left = (event.pageX + 12) + 'px';
+      tooltip.style.top  = (event.pageY - 28) + 'px';
+    })
+    .on('mouseout', () => { tooltip.style.display = 'none'; });
+
+  merged.select('text')
+    .attr('x', d => xScale(d.humidity) + 7)
+    .attr('y', d => yScale(d.temperature) + 4)
+    .text(d => d.city);
+
+  dots.exit().remove();
+}
 </script>
 </body>
 </html>
