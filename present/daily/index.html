@@ -333,6 +333,7 @@ Promise.all([
   });
 
   setMonth(months[0]);
+  redrawMap();
 });
 
 function setMonth(month) {
@@ -361,7 +362,6 @@ function setMonth(month) {
   currentDay = firstDay;
   updateCurrentDayLabel();
   redrawPlot();
-  redrawMap();
   updateCityInfo();
 }
 
