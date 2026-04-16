@@ -423,7 +423,6 @@ function redrawMap() {
     .attr('cy',   d => latToMapY(d.latitude))
     .attr('fill', d => d.city_name_source === currentCity ? 'red' : 'steelblue');
 
-  dots.attr('fill', d => d.city_name_source === currentCity ? 'red' : 'steelblue');
   dots.exit().remove();
 }
 
